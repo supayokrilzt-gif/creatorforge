@@ -1,0 +1,807 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import type { User } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase";
+
+type Member = {
+  id: string;
+  email: string;
+  display_name: string | null;
+  credits: number;
+  created_at: string;
+};
+
+export default function AdminPage() {
+  const [user, setUser] = useState<User | null>(null);
+  const [checking, setChecking] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  const [email, setEmail] = useState("");
+  const [member, setMember] = useState<Member | null>(null);
+
+  const [amount, setAmount] = useState("10");
+  const [note, setNote] = useState("");
+
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    checkAdmin();
+  }, []);
+
+  async function checkAdmin() {
+    setChecking(true);
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    const currentUser = session?.user ?? null;
+
+    setUser(currentUser);
+
+    if (!currentUser) {
+      setIsAdmin(false);
+      setChecking(false);
+      return;
+    }
+
+    const { data, error } = await supabase.rpc(
+      "is_current_user_admin"
+    );
+
+    if (error) {
+      console.error(error);
+      setIsAdmin(false);
+      setChecking(false);
+      return;
+    }
+
+    setIsAdmin(Boolean(data));
+    setChecking(false);
+  }
+
+  async function findMember() {
+    setMessage("");
+    setMember(null);
+
+    const cleanEmail = email.trim();
+
+    if (!cleanEmail) {
+      setMessage("กรุณากรอกอีเมลสมาชิก");
+      return;
+    }
+
+    setLoading(true);
+
+    const { data, error } = await supabase.rpc(
+      "admin_find_member",
+      {
+        p_email: cleanEmail,
+      }
+    );
+
+    setLoading(false);
+
+    if (error) {
+      console.error(error);
+      setMessage("ค้นหาสมาชิกไม่สำเร็จ");
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      setMessage("ไม่พบสมาชิกอีเมลนี้");
+      return;
+    }
+
+    const found = data[0];
+
+    setMember({
+      id: found.id,
+      email: found.email,
+      display_name: found.display_name,
+      credits: found.credits,
+      created_at: found.created_at,
+    });
+  }
+
+  async function changeCredits(value: number) {
+    if (!member) {
+      setMessage("กรุณาค้นหาสมาชิกก่อน");
+      return;
+    }
+
+    if (value === 0) {
+      setMessage("จำนวนเครดิตต้องไม่เป็น 0");
+      return;
+    }
+
+    setLoading(true);
+    setMessage("");
+
+    const { data, error } = await supabase.rpc(
+      "admin_change_credits",
+      {
+        p_user_id: member.id,
+        p_amount: value,
+        p_note:
+          note.trim() ||
+          (value > 0
+            ? "เติมเครดิตโดยแอดมิน"
+            : "หักเครดิตโดยแอดมิน"),
+      }
+    );
+
+    setLoading(false);
+
+    if (error) {
+      console.error(error);
+
+      if (
+        error.message?.includes(
+          "INVALID_BALANCE"
+        )
+      ) {
+        setMessage(
+          "หักไม่ได้ เพราะเครดิตจะติดลบ"
+        );
+        return;
+      }
+
+      setMessage(
+        "เปลี่ยนเครดิตไม่สำเร็จ"
+      );
+      return;
+    }
+
+    const newBalance = Number(data);
+
+    setMember({
+      ...member,
+      credits: newBalance,
+    });
+
+    setMessage(
+      value > 0
+        ? `เติมเครดิตสำเร็จ +${value} เครดิต`
+        : `หักเครดิตสำเร็จ ${value} เครดิต`
+    );
+  }
+
+  async function applyCustomAmount(
+    mode: "add" | "remove"
+  ) {
+    const parsed = Number(amount);
+
+    if (
+      !Number.isFinite(parsed) ||
+      parsed <= 0
+    ) {
+      setMessage(
+        "กรุณากรอกจำนวนเครดิตมากกว่า 0"
+      );
+      return;
+    }
+
+    const value =
+      mode === "add"
+        ? Math.floor(parsed)
+        : -Math.floor(parsed);
+
+    await changeCredits(value);
+  }
+
+  async function logout() {
+    await supabase.auth.signOut();
+    window.location.href = "/";
+  }
+
+  if (checking) {
+    return (
+      <main style={styles.page}>
+        <div style={styles.centerCard}>
+          <h2 style={styles.gold}>
+            กำลังตรวจสอบสิทธิ์...
+          </h2>
+        </div>
+      </main>
+    );
+  }
+
+  if (!user) {
+    return (
+      <main style={styles.page}>
+        <div style={styles.centerCard}>
+          <div style={styles.icon}>
+            🔒
+          </div>
+
+          <h1 style={styles.gold}>
+            Admin Login Required
+          </h1>
+
+          <p style={styles.muted}>
+            กรุณาเข้าสู่ระบบจากหน้า CreatorForge ก่อน
+          </p>
+
+          <button
+            style={styles.mainButton}
+            onClick={() =>
+              (window.location.href = "/")
+            }
+          >
+            กลับหน้าหลัก
+          </button>
+        </div>
+      </main>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <main style={styles.page}>
+        <div style={styles.centerCard}>
+          <div style={styles.icon}>
+            ⛔
+          </div>
+
+          <h1 style={styles.gold}>
+            ไม่มีสิทธิ์เข้าถึง
+          </h1>
+
+          <p style={styles.muted}>
+            บัญชีนี้ไม่ใช่ผู้ดูแลระบบ
+          </p>
+
+          <button
+            style={styles.mainButton}
+            onClick={() =>
+              (window.location.href = "/")
+            }
+          >
+            กลับหน้าหลัก
+          </button>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main style={styles.page}>
+      <header style={styles.header}>
+        <div>
+          <div style={styles.logo}>
+            ✦ CREATORFORGE
+          </div>
+
+          <div style={styles.adminTitle}>
+            ADMIN PANEL
+          </div>
+        </div>
+
+        <div style={styles.headerRight}>
+          <span style={styles.adminBadge}>
+            ADMIN
+          </span>
+
+          <span style={styles.email}>
+            {user.email}
+          </span>
+
+          <button
+            style={styles.secondaryButton}
+            onClick={() =>
+              (window.location.href = "/")
+            }
+          >
+            กลับหน้าเว็บ
+          </button>
+
+          <button
+            style={styles.secondaryButton}
+            onClick={logout}
+          >
+            ออกจากระบบ
+          </button>
+        </div>
+      </header>
+
+      <section style={styles.container}>
+        <div style={styles.hero}>
+          <div>
+            <p style={styles.eyebrow}>
+              CREATORFORGE CONTROL CENTER
+            </p>
+
+            <h1 style={styles.heroTitle}>
+              จัดการเครดิตสมาชิก
+            </h1>
+
+            <p style={styles.muted}>
+              ค้นหาสมาชิกด้วยอีเมล แล้วเติมหรือหักเครดิตได้ทันที
+            </p>
+          </div>
+        </div>
+
+        <section style={styles.card}>
+          <h2 style={styles.sectionTitle}>
+            ค้นหาสมาชิก
+          </h2>
+
+          <div style={styles.searchRow}>
+            <input
+              style={styles.input}
+              type="email"
+              placeholder="email@example.com"
+              value={email}
+              onChange={(e) =>
+                setEmail(e.target.value)
+              }
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  findMember();
+                }
+              }}
+            />
+
+            <button
+              style={styles.mainButton}
+              onClick={findMember}
+              disabled={loading}
+            >
+              {loading
+                ? "กำลังค้นหา..."
+                : "ค้นหา"}
+            </button>
+          </div>
+
+          {message && (
+            <div style={styles.message}>
+              {message}
+            </div>
+          )}
+        </section>
+
+        {member && (
+          <section style={styles.card}>
+            <div style={styles.memberTop}>
+              <div>
+                <p style={styles.eyebrow}>
+                  MEMBER
+                </p>
+
+                <h2 style={styles.memberName}>
+                  {member.display_name ||
+                    "สมาชิก"}
+                </h2>
+
+                <p style={styles.memberEmail}>
+                  {member.email}
+                </p>
+              </div>
+
+              <div style={styles.creditBox}>
+                <span style={styles.creditLabel}>
+                  เครดิตปัจจุบัน
+                </span>
+
+                <strong
+                  style={styles.creditNumber}
+                >
+                  {member.credits}
+                </strong>
+              </div>
+            </div>
+
+            <div style={styles.quickSection}>
+              <h3 style={styles.subTitle}>
+                เติมเครดิตด่วน
+              </h3>
+
+              <div style={styles.quickButtons}>
+                {[10, 30, 50, 100].map(
+                  (value) => (
+                    <button
+                      key={value}
+                      style={styles.quickButton}
+                      onClick={() =>
+                        changeCredits(value)
+                      }
+                      disabled={loading}
+                    >
+                      +{value}
+                    </button>
+                  )
+                )}
+              </div>
+            </div>
+
+            <div style={styles.divider} />
+
+            <div style={styles.customGrid}>
+              <div>
+                <label style={styles.label}>
+                  จำนวนเครดิต
+                </label>
+
+                <input
+                  style={styles.input}
+                  type="number"
+                  min="1"
+                  value={amount}
+                  onChange={(e) =>
+                    setAmount(
+                      e.target.value
+                    )
+                  }
+                />
+              </div>
+
+              <div>
+                <label style={styles.label}>
+                  หมายเหตุ
+                </label>
+
+                <input
+                  style={styles.input}
+                  placeholder="เช่น ชำระเงินแล้ว"
+                  value={note}
+                  onChange={(e) =>
+                    setNote(
+                      e.target.value
+                    )
+                  }
+                />
+              </div>
+            </div>
+
+            <div style={styles.actionRow}>
+              <button
+                style={styles.addButton}
+                onClick={() =>
+                  applyCustomAmount("add")
+                }
+                disabled={loading}
+              >
+                + เติมเครดิต
+              </button>
+
+              <button
+                style={styles.removeButton}
+                onClick={() =>
+                  applyCustomAmount(
+                    "remove"
+                  )
+                }
+                disabled={loading}
+              >
+                − หักเครดิต
+              </button>
+            </div>
+
+            <p style={styles.memberDate}>
+              สมัครสมาชิก:{" "}
+              {new Date(
+                member.created_at
+              ).toLocaleString("th-TH")}
+            </p>
+          </section>
+        )}
+      </section>
+    </main>
+  );
+}
+
+const styles: Record<
+  string,
+  React.CSSProperties
+> = {
+  page: {
+    minHeight: "100vh",
+    background:
+      "radial-gradient(circle at 20% 10%, rgba(104,56,176,.18), transparent 30%), linear-gradient(135deg,#050714,#0b0c20 50%,#100b21)",
+    color: "#eee8df",
+    fontFamily:
+      "Arial, Helvetica, sans-serif",
+  },
+
+  header: {
+    minHeight: "72px",
+    padding: "14px 5%",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "20px",
+    borderBottom:
+      "1px solid rgba(220,180,90,.18)",
+    background:
+      "rgba(5,7,18,.84)",
+    backdropFilter: "blur(18px)",
+  },
+
+  logo: {
+    color: "#e7c36f",
+    fontWeight: 800,
+    letterSpacing: "1.5px",
+  },
+
+  adminTitle: {
+    marginTop: "3px",
+    color: "#777384",
+    fontSize: "10px",
+    letterSpacing: "2px",
+  },
+
+  headerRight: {
+    display: "flex",
+    alignItems: "center",
+    gap: "9px",
+    flexWrap: "wrap",
+    justifyContent: "flex-end",
+  },
+
+  adminBadge: {
+    padding: "6px 9px",
+    borderRadius: "999px",
+    border:
+      "1px solid rgba(226,184,90,.3)",
+    color: "#e9c66f",
+    fontSize: "10px",
+    fontWeight: 700,
+  },
+
+  email: {
+    color: "#9b97a7",
+    fontSize: "11px",
+  },
+
+  container: {
+    width: "min(980px,92%)",
+    margin: "0 auto",
+    padding: "36px 0 70px",
+  },
+
+  hero: {
+    padding: "24px 0 28px",
+  },
+
+  eyebrow: {
+    margin: 0,
+    color: "#8f73b2",
+    fontSize: "10px",
+    letterSpacing: "2px",
+  },
+
+  heroTitle: {
+    margin: "7px 0 7px",
+    color: "#efd186",
+    fontSize: "34px",
+    fontWeight: 500,
+  },
+
+  card: {
+    marginBottom: "20px",
+    padding: "26px",
+    border:
+      "1px solid rgba(220,178,86,.17)",
+    borderRadius: "18px",
+    background:
+      "linear-gradient(145deg,rgba(22,19,48,.84),rgba(7,9,24,.92))",
+    boxShadow:
+      "0 22px 60px rgba(0,0,0,.28)",
+  },
+
+  centerCard: {
+    width: "min(460px,92%)",
+    margin: "0 auto",
+    padding: "80px 25px",
+    textAlign: "center",
+  },
+
+  icon: {
+    fontSize: "44px",
+  },
+
+  gold: {
+    color: "#e8c875",
+  },
+
+  muted: {
+    color: "#8a8697",
+    lineHeight: 1.7,
+  },
+
+  sectionTitle: {
+    margin: "0 0 14px",
+    color: "#dcc076",
+    fontSize: "18px",
+  },
+
+  searchRow: {
+    display: "grid",
+    gridTemplateColumns:
+      "minmax(0,1fr) 140px",
+    gap: "10px",
+  },
+
+  input: {
+    width: "100%",
+    minHeight: "46px",
+    padding: "11px 13px",
+    borderRadius: "10px",
+    border:
+      "1px solid rgba(170,137,195,.25)",
+    outline: "none",
+    background:
+      "rgba(4,6,18,.72)",
+    color: "#eee8df",
+  },
+
+  mainButton: {
+    minHeight: "46px",
+    padding: "10px 18px",
+    border: 0,
+    borderRadius: "10px",
+    cursor: "pointer",
+    fontWeight: 700,
+    color: "#171006",
+    background:
+      "linear-gradient(135deg,#986418,#f0ce7a 50%,#a16a18)",
+  },
+
+  secondaryButton: {
+    minHeight: "34px",
+    padding: "7px 11px",
+    border:
+      "1px solid rgba(220,180,90,.18)",
+    borderRadius: "8px",
+    background:
+      "rgba(255,255,255,.03)",
+    color: "#aaa5b3",
+    cursor: "pointer",
+  },
+
+  message: {
+    marginTop: "13px",
+    padding: "11px 13px",
+    borderRadius: "9px",
+    border:
+      "1px solid rgba(225,183,84,.18)",
+    background:
+      "rgba(225,183,84,.06)",
+    color: "#d9bd83",
+    fontSize: "12px",
+  },
+
+  memberTop: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "20px",
+    flexWrap: "wrap",
+  },
+
+  memberName: {
+    margin: "5px 0",
+    color: "#eee2d5",
+    fontSize: "24px",
+  },
+
+  memberEmail: {
+    margin: 0,
+    color: "#858190",
+    fontSize: "12px",
+  },
+
+  creditBox: {
+    minWidth: "150px",
+    padding: "17px 22px",
+    textAlign: "center",
+    borderRadius: "14px",
+    border:
+      "1px solid rgba(224,182,87,.25)",
+    background:
+      "rgba(220,172,70,.055)",
+  },
+
+  creditLabel: {
+    display: "block",
+    color: "#888492",
+    fontSize: "10px",
+  },
+
+  creditNumber: {
+    display: "block",
+    marginTop: "5px",
+    color: "#f0cf78",
+    fontSize: "34px",
+  },
+
+  quickSection: {
+    marginTop: "28px",
+  },
+
+  subTitle: {
+    color: "#aaa5b2",
+    fontSize: "12px",
+  },
+
+  quickButtons: {
+    display: "grid",
+    gridTemplateColumns:
+      "repeat(4,1fr)",
+    gap: "10px",
+  },
+
+  quickButton: {
+    minHeight: "52px",
+    border:
+      "1px solid rgba(226,184,90,.27)",
+    borderRadius: "11px",
+    background:
+      "rgba(226,184,90,.055)",
+    color: "#e8c870",
+    cursor: "pointer",
+    fontSize: "16px",
+    fontWeight: 700,
+  },
+
+  divider: {
+    height: "1px",
+    margin: "26px 0",
+    background:
+      "rgba(255,255,255,.07)",
+  },
+
+  customGrid: {
+    display: "grid",
+    gridTemplateColumns:
+      "1fr 1.5fr",
+    gap: "12px",
+  },
+
+  label: {
+    display: "block",
+    marginBottom: "7px",
+    color: "#7f7b8a",
+    fontSize: "10px",
+  },
+
+  actionRow: {
+    display: "grid",
+    gridTemplateColumns:
+      "1fr 1fr",
+    gap: "10px",
+    marginTop: "14px",
+  },
+
+  addButton: {
+    minHeight: "48px",
+    border: 0,
+    borderRadius: "10px",
+    background:
+      "linear-gradient(135deg,#8d5f19,#edc977,#9d6719)",
+    color: "#171006",
+    fontWeight: 700,
+    cursor: "pointer",
+  },
+
+  removeButton: {
+    minHeight: "48px",
+    border:
+      "1px solid rgba(206,107,91,.28)",
+    borderRadius: "10px",
+    background:
+      "rgba(170,63,51,.12)",
+    color: "#daa298",
+    fontWeight: 700,
+    cursor: "pointer",
+  },
+
+  memberDate: {
+    margin: "20px 0 0",
+    color: "#686574",
+    fontSize: "10px",
+  },
+};
