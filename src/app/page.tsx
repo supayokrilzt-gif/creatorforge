@@ -2040,8 +2040,8 @@ export default function Home() {
       );
 
       const deepText =
-        `ไพ่ใบที่ 2 ${second.thai} (${second.reversed ? "กลับหัว" : "ตั้งตรง"}) สื่อถึง ${second.meaning} ` +
-        `ไพ่ใบที่ 3 ${third.thai} (${third.reversed ? "กลับหัว" : "ตั้งตรง"}) สื่อถึง ${third.meaning} ` +
+        `${second.thai} (${second.reversed ? "กลับหัว" : "ตั้งตรง"}) สะท้อนประเด็นเรื่อง ${second.meaning} ` +
+        `${third.thai} (${third.reversed ? "กลับหัว" : "ตั้งตรง"}) ช่วยขยายภาพต่อว่า ${third.meaning} ` +
         contextualDeepText;
 
       setSecondCard(second);

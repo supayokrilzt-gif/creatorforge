@@ -6,11 +6,22 @@ import { supabase } from "@/lib/supabase";
 
 export default function AdminShortcut() {
   const pathname = usePathname();
-
   const [showAdmin, setShowAdmin] = useState(false);
 
   useEffect(() => {
     checkAdmin();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(() => {
+      setTimeout(() => {
+        checkAdmin();
+      }, 100);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   async function checkAdmin() {
@@ -28,7 +39,7 @@ export default function AdminShortcut() {
     );
 
     if (error) {
-      console.error(error);
+      console.error("ตรวจสอบสิทธิ์แอดมินไม่สำเร็จ:", error);
       setShowAdmin(false);
       return;
     }
@@ -40,7 +51,6 @@ export default function AdminShortcut() {
     return null;
   }
 
-  // อยู่หน้าแอดมินแล้ว ไม่ต้องแสดงปุ่มซ้ำ
   if (pathname.startsWith("/admin")) {
     return null;
   }
@@ -55,28 +65,17 @@ export default function AdminShortcut() {
         right: "22px",
         bottom: "22px",
         zIndex: 9999,
-
         padding: "12px 18px",
-
         borderRadius: "999px",
-
-        border:
-          "1px solid rgba(236,194,98,.38)",
-
+        border: "1px solid rgba(236,194,98,.38)",
         background:
           "linear-gradient(135deg,#8d5f19,#edc977,#9d6719)",
-
         color: "#171006",
-
         fontWeight: 800,
         fontSize: "12px",
-
         letterSpacing: ".8px",
-
         cursor: "pointer",
-
-        boxShadow:
-          "0 10px 30px rgba(0,0,0,.4)",
+        boxShadow: "0 10px 30px rgba(0,0,0,.4)",
       }}
     >
       ⚙ ADMIN
