@@ -1256,36 +1256,133 @@ function validateQuestion(question: string) {
 }
 
 function detectIntent(question: string): Intent {
-  if (hasAny(question, phrases.loveReturn)) return "love_return";
-  if (hasAny(question, phrases.loveTrust)) return "love_trust";
-  if (hasAny(question, phrases.loveContinue)) return "love_continue";
-  if (hasAny(question, phrases.loveCrush)) return "love_crush";
+  const q = question
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
 
-  if (hasAny(question, phrases.customerPayment)) return "customer_payment";
-  if (hasAny(question, phrases.customerSale)) return "customer_sale";
+  // กฎเดิม: จับคำถามที่ระบุเจตนาชัดเจนก่อน
+  if (hasAny(q, phrases.loveReturn)) return "love_return";
+  if (hasAny(q, phrases.loveTrust)) return "love_trust";
+  if (hasAny(q, phrases.loveContinue)) return "love_continue";
+  if (hasAny(q, phrases.loveCrush)) return "love_crush";
 
-  if (hasAny(question, phrases.workQuit)) return "work_quit";
-  if (hasAny(question, phrases.workOpportunity)) return "work_opportunity";
-  if (hasAny(question, phrases.workSurvival)) return "work_survival";
+  if (hasAny(q, phrases.customerPayment)) return "customer_payment";
+  if (hasAny(q, phrases.customerSale)) return "customer_sale";
 
-  if (hasAny(question, phrases.moneyInvest)) return "money_invest";
-  if (hasAny(question, phrases.moneyLend)) return "money_lend";
-  if (hasAny(question, phrases.moneyGeneral)) return "money_general";
+  if (hasAny(q, phrases.workQuit)) return "work_quit";
+  if (hasAny(q, phrases.workOpportunity)) return "work_opportunity";
+  if (hasAny(q, phrases.workSurvival)) return "work_survival";
 
-  const q = question.toLowerCase();
+  if (hasAny(q, phrases.moneyInvest)) return "money_invest";
+  if (hasAny(q, phrases.moneyLend)) return "money_lend";
+  if (hasAny(q, phrases.moneyGeneral)) return "money_general";
+
+  // แยกบริบทงาน ลูกค้า และการเงินก่อน
+  // เพื่อไม่ให้คำว่า เขา / เค้า / คนนั้น ถูกตีความเป็นเรื่องความรักผิดหมวด
+  const hasWorkContext =
+    /งาน|บริษัท|หัวหน้า|เจ้านาย|เพื่อนร่วมงาน|สมัครงาน|สัมภาษณ์|อาชีพ|ธุรกิจ|ร้าน|โปรเจกต์/.test(q);
+
+  const hasCustomerContext =
+    /ลูกค้า|ผู้ซื้อ|คนซื้อ|ผู้ว่าจ้าง|เจ้าของงาน|คู่ค้า/.test(q);
+
+  const hasMoneyContext =
+    /เงิน|รายได้|รายจ่าย|หนี้|กำไร|การเงิน|ลงทุน|หุ้น|กู้|ยืม|ชำระ|จ่ายเงิน|โอนเงิน/.test(q);
 
   if (
-    /งาน|ธุรกิจ|ร้าน|อาชีพ|โปรเจกต์/.test(q) &&
-    /ดีไหม|ดีมั้ย|ไปต่อ|รอด|รุ่ง|อนาคต|เวิร์ก|เวิร์ค/.test(q)
+    hasWorkContext &&
+    /ลาออก|ออกจากงาน|เปลี่ยนงาน|ย้ายงาน|ควรออก/.test(q)
+  ) {
+    return "work_quit";
+  }
+
+  if (
+    hasWorkContext &&
+    /โอกาส|ได้งาน|รับไหม|รับมั้ย|ผ่านไหม|ผ่านมั้ย|สัมภาษณ์/.test(q)
+  ) {
+    return "work_opportunity";
+  }
+
+  if (
+    hasWorkContext &&
+    /ดีไหม|ดีมั้ย|ไปต่อ|รอด|รุ่ง|อนาคต|เวิร์ก|เวิร์ค|เป็นยังไง|เป็นอย่างไร/.test(q)
   ) {
     return "work_survival";
   }
 
   if (
+    hasCustomerContext &&
+    /จ่าย|ชำระ|โอน|เงิน|ยอด|ค้าง|เบี้ยว/.test(q)
+  ) {
+    return "customer_payment";
+  }
+
+  if (hasCustomerContext) {
+    return "customer_sale";
+  }
+
+  if (
+    hasMoneyContext &&
+    /ลงทุน|หุ้น|กองทุน|คริปโต|ธุรกิจใหม่/.test(q)
+  ) {
+    return "money_invest";
+  }
+
+  if (
+    hasMoneyContext &&
+    /ยืม|ให้ยืม|กู้|ให้กู้/.test(q)
+  ) {
+    return "money_lend";
+  }
+
+  if (hasMoneyContext) {
+    return "money_general";
+  }
+
+  // ความสัมพันธ์ที่ระบุชัด
+  if (
     /รัก|แฟน|คนรัก|ความสัมพันธ์/.test(q) &&
     /ไปต่อ|คบต่อ|พอไหม|พอมั้ย|เลิก|รอด/.test(q)
   ) {
     return "love_continue";
+  }
+
+  /*
+    LOVE PERSON INFERENCE
+
+    ถ้าผู้ใช้พูดถึง เขา / เค้า / คนนั้น / คนที่คิดถึง
+    โดยไม่มีบริบทงาน ลูกค้า หรือการเงิน
+    ให้ตีความว่าเป็นคนสำคัญ คนรัก หรือคนที่ผู้ใช้กำลังคิดถึง
+  */
+  const hasPersonReference =
+    /เขา|เค้า|คนนั้น|คนๆนั้น|คน ๆ นั้น|คนนี้|คนที่คิดถึง|คนที่ชอบ|คนสำคัญ|ผู้ชายคนนั้น|ผู้หญิงคนนั้น|แฟน|คนรัก|อดีตแฟน/.test(q);
+
+  const asksFeelingOrThought =
+    /คิดอะไร|คิดยังไง|คิดอย่างไร|รู้สึกอะไร|รู้สึกยังไง|รู้สึกอย่างไร|มองยังไง|มองอย่างไร|มองเรา|มีใจ|ชอบ|สนใจ|คิดถึง|แคร์|ห่วง|รัก/.test(q);
+
+  const asksBehavior =
+    /ทำอะไร|ทำไม.*เงียบ|ทำไม.*หาย|ทำไม.*ไม่ทัก|ทำไม.*ไม่ตอบ|ทำไม.*ทำแบบนี้|เป็นอะไร|เป็นยังไง|เป็นอย่างไร|ต้องการอะไร|อยากได้อะไร/.test(q);
+
+  if (
+    hasPersonReference &&
+    (asksFeelingOrThought || asksBehavior)
+  ) {
+    return "love_crush";
+  }
+
+  if (
+    hasPersonReference &&
+    /เรา|กับเรา|ระหว่างเรา|ความสัมพันธ์|เรื่องของเรา|ต่อเรา/.test(q)
+  ) {
+    return "love_crush";
+  }
+
+  // fallback เดิม
+  if (
+    /งาน|ธุรกิจ|ร้าน|อาชีพ|โปรเจกต์/.test(q) &&
+    /ดีไหม|ดีมั้ย|ไปต่อ|รอด|รุ่ง|อนาคต|เวิร์ก|เวิร์ค/.test(q)
+  ) {
+    return "work_survival";
   }
 
   if (/เงิน|รายได้|รายจ่าย|หนี้|การเงิน|กำไร/.test(q)) {
@@ -2039,10 +2136,7 @@ export default function Home() {
         third.tone
       );
 
-      const deepText =
-        `${second.thai} (${second.reversed ? "กลับหัว" : "ตั้งตรง"}) สะท้อนประเด็นเรื่อง ${second.meaning} ` +
-        `${third.thai} (${third.reversed ? "กลับหัว" : "ตั้งตรง"}) ช่วยขยายภาพต่อว่า ${third.meaning} ` +
-        contextualDeepText;
+      const deepText = contextualDeepText;
 
       setSecondCard(second);
       setThirdCard(third);
@@ -2581,38 +2675,7 @@ export default function Home() {
                               }}
                             />
 
-                            <strong
-                              style={{
-                                display: "block",
-                                marginTop: "7px",
-                              }}
-                            >
-                              {secondCard.name}
-                            </strong>
 
-                            <span
-                              style={{
-                                display: "block",
-                                marginTop: "3px",
-                                color: secondCard.reversed ? "#d69a91" : "#a7c889",
-                                fontSize: "9px",
-                                fontWeight: 700,
-                              }}
-                            >
-                              {secondCard.reversed ? "กลับหัว" : "ตั้งตรง"}
-                            </span>
-
-                            <span
-                              style={{
-                                display: "block",
-                                marginTop: "5px",
-                                color: "#8f8a99",
-                                fontSize: "9px",
-                                lineHeight: 1.45,
-                              }}
-                            >
-                              {secondCard.meaning}
-                            </span>
                           </div>
                         )}
 
@@ -2638,38 +2701,7 @@ export default function Home() {
                               }}
                             />
 
-                            <strong
-                              style={{
-                                display: "block",
-                                marginTop: "7px",
-                              }}
-                            >
-                              {thirdCard.name}
-                            </strong>
 
-                            <span
-                              style={{
-                                display: "block",
-                                marginTop: "3px",
-                                color: thirdCard.reversed ? "#d69a91" : "#a7c889",
-                                fontSize: "9px",
-                                fontWeight: 700,
-                              }}
-                            >
-                              {thirdCard.reversed ? "กลับหัว" : "ตั้งตรง"}
-                            </span>
-
-                            <span
-                              style={{
-                                display: "block",
-                                marginTop: "5px",
-                                color: "#8f8a99",
-                                fontSize: "9px",
-                                lineHeight: 1.45,
-                              }}
-                            >
-                              {thirdCard.meaning}
-                            </span>
                           </div>
                         )}
                       </div>
