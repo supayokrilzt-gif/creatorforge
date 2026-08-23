@@ -1,0 +1,1073 @@
+/* =====================================================
+   CREATORFORGE TAROT RESULT
+   CLEAN SINGLE VERSION
+===================================================== */
+
+
+/* ซ่อนระบบแสดงผลเก่าของ page.tsx
+   แต่ยังเก็บ DOM ไว้ให้ Bridge อ่านข้อมูล */
+
+.page .center {
+  position: absolute !important;
+  left: -100000px !important;
+  top: 0 !important;
+
+  width: 1px !important;
+  height: 1px !important;
+
+  overflow: hidden !important;
+  opacity: 0 !important;
+
+  pointer-events: none !important;
+}
+
+
+/* =====================================================
+   RESULT SCREEN
+===================================================== */
+
+.tarot-result-screen {
+  position: fixed;
+  inset: 0;
+
+  z-index: 950000;
+
+  width: 100vw;
+  height: 100dvh;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  background:
+    radial-gradient(
+      circle at 50% 40%,
+      #27163f 0%,
+      #090914 54%,
+      #020309 100%
+    );
+
+  color: white;
+}
+
+
+/* =====================================================
+   CARD ZONE
+===================================================== */
+
+.tarot-result-card-zone {
+  position: relative;
+
+  width: 100%;
+  min-height: 100dvh;
+
+  overflow: hidden;
+}
+
+
+/* ไพ่ใบเดียว */
+
+.tarot-result-full-card {
+  position: fixed;
+
+  left: 50%;
+  top: 50%;
+
+  z-index: 1;
+
+  width: 260px;
+  height: 446px;
+
+  max-width:
+    calc(100vw - 36px);
+
+  max-height:
+    calc(100dvh - 70px);
+
+  object-fit: contain;
+  object-position: center;
+
+  border-radius: 13px;
+
+  filter:
+    brightness(.80)
+    contrast(1.04)
+    saturate(1.02);
+
+  box-shadow:
+    0 25px 80px
+    rgba(0,0,0,.7);
+}
+
+
+/* =====================================================
+   THREE CARD BACKGROUND
+===================================================== */
+
+.tarot-result-three-cards {
+  position: fixed;
+
+  left: 50%;
+  top: 50%;
+
+  z-index: 1;
+
+  width:
+    min(
+      calc(100vw - 22px),
+      420px
+    );
+
+  height:
+    min(
+      calc(100dvh - 28px),
+      760px
+    );
+
+  transform:
+    translate(-50%, -50%);
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 4px;
+
+  overflow: hidden;
+
+  border-radius: 20px;
+
+  background:
+    #05050b;
+
+  border:
+    1px solid
+    rgba(235,202,117,.24);
+
+  box-shadow:
+    0 20px 80px
+    rgba(0,0,0,.75);
+}
+
+
+.tarot-result-three-card {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  background:
+    #060610;
+}
+
+
+.tarot-result-three-card img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+  object-position: center;
+
+  filter:
+    brightness(.72)
+    contrast(1.05)
+    saturate(.94);
+}
+
+
+/* =====================================================
+   SHADE
+===================================================== */
+
+.tarot-result-card-shade {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 3;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(2,3,10,.06) 0%,
+      rgba(2,3,10,.08) 25%,
+      rgba(2,3,10,.24) 48%,
+      rgba(2,3,10,.68) 76%,
+      rgba(2,3,10,.94) 100%
+    );
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.tarot-result-header {
+  position: fixed;
+
+  left: 0;
+  right: 0;
+  top: 0;
+
+  z-index: 20;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  padding:
+    calc(
+      14px +
+      env(safe-area-inset-top)
+    )
+    16px
+    10px;
+}
+
+
+.tarot-result-header span {
+  color:
+    rgba(239,207,126,.76);
+
+  font-size: 10px;
+
+  letter-spacing: 2px;
+}
+
+
+.tarot-result-header button {
+  width: 38px;
+  height: 38px;
+
+  border-radius: 50%;
+
+  border:
+    1px solid
+    rgba(239,207,126,.28);
+
+  background:
+    rgba(4,5,15,.56);
+
+  color:
+    #f2d790;
+
+  font-size: 22px;
+}
+
+
+/* =====================================================
+   TEXT
+===================================================== */
+
+.tarot-result-text-layer {
+  position: relative;
+
+  z-index: 10;
+
+  width:
+    min(
+      calc(100% - 36px),
+      470px
+    );
+
+  margin:
+    38dvh auto 120px;
+
+  padding:
+    8px 8px 26px;
+
+  background:
+    transparent;
+}
+
+
+.tarot-result-label {
+  margin-bottom: 14px;
+
+  color:
+    rgba(238,204,118,.72);
+
+  font-size: 9px;
+
+  text-align: center;
+
+  letter-spacing: 2.4px;
+}
+
+
+/* =====================================================
+   POEM
+===================================================== */
+
+.tarot-result-poem {
+  margin-bottom: 22px;
+}
+
+
+.tarot-result-poem p {
+  margin:
+    0 0 4px;
+
+  color:
+    #f4d78c;
+
+  font-size: 20px;
+  line-height: 1.45;
+
+  font-weight: 700;
+
+  text-align: center;
+
+  text-shadow:
+    0 2px 5px #000,
+    0 5px 20px rgba(0,0,0,.95);
+}
+
+
+/* =====================================================
+   SPOKEN READING
+===================================================== */
+
+.tarot-spoken-reading p,
+.tarot-deep-reading-text p {
+  margin:
+    0 0 18px;
+
+  color:
+    rgba(255,252,241,.98);
+
+  font-size: 15px;
+  line-height: 1.85;
+
+  font-weight: 400;
+
+  text-align: left;
+
+  text-shadow:
+    0 2px 5px #000,
+    0 4px 18px rgba(0,0,0,.98);
+}
+
+
+.tarot-spoken-reading p:last-child {
+  margin-top: 25px;
+
+  padding-top: 16px;
+
+  border-top:
+    1px solid
+    rgba(239,205,119,.22);
+
+  color:
+    #f0d286;
+
+  font-weight: 600;
+
+  text-align: center;
+}
+
+
+/* =====================================================
+   DEEP RESULT TEXT
+===================================================== */
+
+.tarot-result-deep
+.tarot-result-text-layer {
+  margin-top:
+    38dvh;
+}
+
+
+.tarot-deep-reading-text {
+  width: 100%;
+}
+
+
+.tarot-deep-reading-text p {
+  font-size: 16px;
+  line-height: 1.9;
+
+  font-weight: 500;
+}
+
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+
+.tarot-result-actions {
+  position: fixed;
+
+  right: 12px;
+
+  bottom:
+    calc(
+      12px +
+      env(safe-area-inset-bottom)
+    );
+
+  z-index: 30;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-end;
+
+  gap: 8px;
+}
+
+
+.tarot-result-more {
+  min-width: 150px;
+  min-height: 52px;
+
+  padding:
+    8px 16px;
+
+  border-radius: 12px;
+
+  border:
+    1px solid
+    rgba(255,232,169,.86);
+
+  background:
+    linear-gradient(
+      135deg,
+      #9f6710,
+      #e9bc49 48%,
+      #f6dd93 72%,
+      #ae7212
+    );
+
+  color:
+    #1b1102;
+
+  box-shadow:
+    0 9px 35px
+    rgba(222,171,48,.42);
+
+  cursor: pointer;
+
+  animation:
+    tarotMorePulse
+    2s ease-in-out infinite;
+}
+
+
+.tarot-result-more strong {
+  display: block;
+
+  font-size: 13px;
+
+  font-weight: 900;
+}
+
+
+.tarot-result-more small {
+  display: block;
+
+  margin-top: 3px;
+
+  font-size: 9px;
+
+  opacity: .74;
+}
+
+
+@keyframes tarotMorePulse {
+
+  0%,
+  100% {
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+  50% {
+    transform:
+      translateY(-2px)
+      scale(1.035);
+  }
+
+}
+
+
+.tarot-result-home {
+  min-height: 34px;
+
+  padding:
+    7px 12px;
+
+  border-radius: 10px;
+
+  border:
+    1px solid
+    rgba(239,207,126,.25);
+
+  background:
+    rgba(5,6,17,.72);
+
+  color:
+    rgba(255,245,215,.78);
+
+  font-size: 10px;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+  .tarot-result-full-card {
+    width:
+      min(
+        66vw,
+        250px
+      );
+
+    height:
+      min(
+        69dvh,
+        430px
+      );
+  }
+
+
+  .tarot-result-text-layer {
+    width:
+      calc(100% - 28px);
+
+    margin-top:
+      34dvh;
+  }
+
+
+  .tarot-result-poem p {
+    font-size: 18px;
+  }
+
+
+  .tarot-spoken-reading p,
+  .tarot-deep-reading-text p {
+    font-size: 14.5px;
+
+    line-height: 1.82;
+  }
+
+
+  .tarot-result-deep
+  .tarot-result-text-layer {
+    margin-top:
+      32dvh;
+  }
+
+}
+
+
+/* =====================================================
+   DESKTOP
+===================================================== */
+
+@media (min-width: 900px) {
+
+  .tarot-result-full-card {
+    width: 250px;
+    height: 430px;
+  }
+
+
+  .tarot-result-text-layer {
+    width: 470px;
+
+    margin-top:
+      37dvh;
+  }
+
+}
+
+/* =====================================================
+   MOBILE READING EXPERIENCE
+   CreatorForge Tarot
+===================================================== */
+
+@media (max-width: 600px) {
+
+  /* ---------------------------------------------
+     หน้าหลักผลคำทำนาย
+  --------------------------------------------- */
+
+  .tarot-result-screen {
+    width: 100vw !important;
+    height: 100dvh !important;
+
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+
+    overscroll-behavior: contain;
+
+    -webkit-overflow-scrolling: touch;
+  }
+
+
+  /* ---------------------------------------------
+     พื้นที่ผล
+  --------------------------------------------- */
+
+  .tarot-result-card-zone {
+    min-height: 100dvh !important;
+
+    padding-top:
+      calc(
+        54px +
+        env(safe-area-inset-top)
+      ) !important;
+
+    padding-bottom:
+      calc(
+        120px +
+        env(safe-area-inset-bottom)
+      ) !important;
+  }
+
+
+  /* ---------------------------------------------
+     ไพ่ใบแรก
+  --------------------------------------------- */
+
+  .tarot-result-full-card {
+    top: 46% !important;
+
+    width:
+      min(
+        72vw,
+        270px
+      ) !important;
+
+    height:
+      min(
+        64dvh,
+        455px
+      ) !important;
+
+    max-width:
+      calc(100vw - 30px) !important;
+
+    max-height:
+      calc(100dvh - 145px) !important;
+
+    border-radius:
+      14px !important;
+  }
+
+
+  /* ---------------------------------------------
+     เงาทับไพ่สำหรับอ่านข้อความ
+  --------------------------------------------- */
+
+  .tarot-result-card-shade {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(2,3,10,.02) 0%,
+        rgba(2,3,10,.05) 22%,
+        rgba(2,3,10,.18) 42%,
+        rgba(2,3,10,.55) 67%,
+        rgba(2,3,10,.88) 85%,
+        rgba(2,3,10,.97) 100%
+      ) !important;
+  }
+
+
+  /* ---------------------------------------------
+     Header
+  --------------------------------------------- */
+
+  .tarot-result-header {
+    padding:
+      calc(
+        10px +
+        env(safe-area-inset-top)
+      )
+      12px
+      8px !important;
+  }
+
+
+  .tarot-result-header span {
+    font-size:
+      9px !important;
+
+    letter-spacing:
+      1.8px !important;
+  }
+
+
+  .tarot-result-header button {
+    width:
+      36px !important;
+
+    height:
+      36px !important;
+
+    font-size:
+      20px !important;
+  }
+
+
+  /* ---------------------------------------------
+     Text Layer
+  --------------------------------------------- */
+
+  .tarot-result-text-layer {
+    width:
+      calc(
+        100% - 30px
+      ) !important;
+
+    max-width:
+      420px !important;
+
+    margin:
+      31dvh auto
+      115px !important;
+
+    padding:
+      0 3px
+      22px !important;
+  }
+
+
+  .tarot-result-label {
+    margin-bottom:
+      10px !important;
+
+    font-size:
+      8px !important;
+
+    letter-spacing:
+      2px !important;
+  }
+
+
+  /* ---------------------------------------------
+     กลอน
+  --------------------------------------------- */
+
+  .tarot-result-poem {
+    margin-bottom:
+      18px !important;
+  }
+
+
+  .tarot-result-poem p {
+    margin:
+      0 0 3px !important;
+
+    font-size:
+      clamp(
+        16px,
+        4.6vw,
+        19px
+      ) !important;
+
+    line-height:
+      1.45 !important;
+
+    font-weight:
+      700 !important;
+
+    text-align:
+      center !important;
+  }
+
+
+  /* ---------------------------------------------
+     คำทำนายหลัก
+  --------------------------------------------- */
+
+  .tarot-spoken-reading p,
+  .tarot-deep-reading-text p {
+    margin:
+      0 0 16px !important;
+
+    font-size:
+      clamp(
+        14px,
+        3.9vw,
+        15.5px
+      ) !important;
+
+    line-height:
+      1.82 !important;
+
+    font-weight:
+      450 !important;
+
+    text-align:
+      left !important;
+
+    word-break:
+      normal;
+
+    overflow-wrap:
+      anywhere;
+  }
+
+
+  .tarot-spoken-reading p:last-child {
+    margin-top:
+      22px !important;
+
+    padding-top:
+      14px !important;
+
+    font-size:
+      clamp(
+        14px,
+        4vw,
+        15.5px
+      ) !important;
+  }
+
+
+  /* ---------------------------------------------
+     ปุ่มด้านล่าง
+  --------------------------------------------- */
+
+  .tarot-result-actions {
+    right:
+      10px !important;
+
+    left:
+      10px !important;
+
+    bottom:
+      calc(
+        10px +
+        env(safe-area-inset-bottom)
+      ) !important;
+
+    width:
+      auto !important;
+
+    flex-direction:
+      row !important;
+
+    justify-content:
+      flex-end !important;
+
+    align-items:
+      center !important;
+
+    gap:
+      8px !important;
+  }
+
+
+  .tarot-result-more {
+    min-width:
+      150px !important;
+
+    min-height:
+      48px !important;
+
+    padding:
+      7px 14px !important;
+
+    border-radius:
+      12px !important;
+  }
+
+
+  .tarot-result-more strong {
+    font-size:
+      13px !important;
+  }
+
+
+  .tarot-result-more small {
+    font-size:
+      8px !important;
+  }
+
+
+  .tarot-result-home {
+    min-width:
+      62px !important;
+
+    min-height:
+      42px !important;
+
+    padding:
+      6px 10px !important;
+
+    font-size:
+      10px !important;
+
+    border-radius:
+      11px !important;
+  }
+
+
+  /* ---------------------------------------------
+     DEEP RESULT — ไพ่ 3 ใบ
+  --------------------------------------------- */
+
+  .tarot-result-three-cards {
+    width:
+      calc(
+        100vw - 16px
+      ) !important;
+
+    height:
+      calc(
+        100dvh - 18px
+      ) !important;
+
+    max-width:
+      420px !important;
+
+    max-height:
+      none !important;
+
+    border-radius:
+      18px !important;
+
+    gap:
+      3px !important;
+  }
+
+
+  .tarot-result-three-card img {
+    object-fit:
+      cover !important;
+
+    object-position:
+      center !important;
+  }
+
+
+  /* ---------------------------------------------
+     Deep Reading Text
+  --------------------------------------------- */
+
+  .tarot-result-deep
+  .tarot-result-text-layer {
+    margin-top:
+      30dvh !important;
+
+    width:
+      calc(
+        100% - 26px
+      ) !important;
+
+    max-width:
+      420px !important;
+  }
+
+
+  .tarot-deep-reading-text p {
+    font-size:
+      clamp(
+        14px,
+        3.9vw,
+        15.5px
+      ) !important;
+
+    line-height:
+      1.85 !important;
+  }
+
+}
+
+
+/* =====================================================
+   SMALL PHONE
+   เช่น iPhone SE / หน้าจอแคบ
+===================================================== */
+
+@media (max-width: 380px) {
+
+  .tarot-result-full-card {
+    width:
+      68vw !important;
+
+    height:
+      59dvh !important;
+  }
+
+
+  .tarot-result-text-layer {
+    width:
+      calc(
+        100% - 24px
+      ) !important;
+
+    margin-top:
+      29dvh !important;
+  }
+
+
+  .tarot-spoken-reading p,
+  .tarot-deep-reading-text p {
+    font-size:
+      13.5px !important;
+
+    line-height:
+      1.78 !important;
+  }
+
+
+  .tarot-result-more {
+    min-width:
+      138px !important;
+  }
+
+}
+
+
+/* =====================================================
+   LARGE PHONE
+   เช่น Pro Max / Android จอใหญ่
+===================================================== */
+
+@media (
+  min-width: 430px
+) and
+  (max-width: 600px)
+{
+
+  .tarot-result-full-card {
+    width:
+      min(
+        66vw,
+        280px
+      ) !important;
+
+    height:
+      min(
+        66dvh,
+        470px
+      ) !important;
+  }
+
+
+  .tarot-result-text-layer {
+    width:
+      min(
+        calc(100% - 38px),
+        430px
+      ) !important;
+  }
+
+}

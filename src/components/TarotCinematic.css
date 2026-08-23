@@ -1,0 +1,1248 @@
+/* =====================================================
+   CREATORFORGE TAROT CINEMATIC
+   CLEAN VERSION
+===================================================== */
+
+.tarot-cinema {
+  position: fixed;
+  inset: 0;
+
+  z-index: 990000;
+
+  width: 100vw;
+  height: 100dvh;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 50% 46%,
+      rgba(64,32,104,.76) 0%,
+      rgba(19,11,43,.97) 36%,
+      #070711 70%,
+      #020208 100%
+    );
+
+  color: white;
+}
+
+
+/* =====================================================
+   STARS
+===================================================== */
+
+.tarot-stars {
+  position: absolute;
+  inset: -20%;
+
+  opacity: .38;
+
+  pointer-events: none;
+
+  background-image:
+    radial-gradient(
+      circle,
+      rgba(255,231,161,.88) 0 1px,
+      transparent 1.5px
+    );
+
+  background-size:
+    70px 70px;
+}
+
+
+.tarot-stars-a {
+  animation:
+    tarotStarsA
+    17s linear infinite;
+}
+
+
+.tarot-stars-b {
+  opacity: .22;
+
+  background-size:
+    115px 115px;
+
+  animation:
+    tarotStarsB
+    23s linear infinite;
+}
+
+
+@keyframes tarotStarsA {
+  to {
+    transform:
+      translate(
+        35px,
+        -55px
+      );
+  }
+}
+
+
+@keyframes tarotStarsB {
+  to {
+    transform:
+      translate(
+        -45px,
+        35px
+      );
+  }
+}
+
+
+/* =====================================================
+   VIGNETTE
+===================================================== */
+
+.tarot-cinema-vignette {
+  position: absolute;
+  inset: 0;
+
+  z-index: 2;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle at center,
+      transparent 30%,
+      rgba(0,0,0,.32) 67%,
+      rgba(0,0,0,.88) 100%
+    );
+}
+
+
+.tarot-cinema-light {
+  position: absolute;
+
+  left: 50%;
+  top: 47%;
+
+  z-index: 3;
+
+  width:
+    min(78vw, 700px);
+
+  aspect-ratio: 1;
+
+  transform:
+    translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255,222,135,.40),
+      rgba(157,93,255,.18) 35%,
+      transparent 72%
+    );
+
+  filter:
+    blur(16px);
+}
+
+
+/* =====================================================
+   SOUND
+===================================================== */
+
+.tarot-cinema-sound {
+  position: absolute;
+
+  right: 15px;
+
+  top:
+    calc(
+      15px +
+      env(safe-area-inset-top)
+    );
+
+  z-index: 100;
+
+  width: 40px;
+  height: 40px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  border:
+    1px solid
+    rgba(239,207,126,.30);
+
+  background:
+    rgba(4,5,15,.64);
+
+  color:
+    #efd184;
+}
+
+
+/* =====================================================
+   PORTAL
+===================================================== */
+
+.tarot-portal-wrap {
+  position: absolute;
+
+  left: 50%;
+  top: 47%;
+
+  z-index: 8;
+
+  width:
+    min(70vw, 580px);
+
+  aspect-ratio: 1;
+
+  transform:
+    translate(-50%, -50%);
+
+  opacity: 0;
+
+  pointer-events: none;
+}
+
+
+.tarot-portal-glow {
+  position: absolute;
+
+  inset: 12%;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255,224,142,.42),
+      rgba(136,72,255,.22) 40%,
+      transparent 72%
+    );
+
+  filter:
+    blur(20px);
+}
+
+
+.tarot-portal-ring {
+  position: absolute;
+
+  inset: 8%;
+
+  border-radius: 50%;
+
+  border:
+    1px solid
+    rgba(239,206,126,.42);
+
+  box-shadow:
+    0 0 45px
+    rgba(164,100,255,.28);
+}
+
+
+.tarot-portal-ring-b {
+  inset: 18%;
+
+  border-color:
+    rgba(193,141,255,.35);
+}
+
+
+.tarot-portal-core {
+  position: absolute;
+
+  inset: 32%;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  color:
+    #f1d58c;
+
+  font-size: 42px;
+
+  text-shadow:
+    0 0 25px
+    rgba(255,221,132,.62);
+}
+
+
+/* =====================================================
+   ORBIT
+===================================================== */
+
+.tarot-orbit {
+  position: absolute;
+
+  left: 50%;
+  top: 47%;
+
+  z-index: 12;
+
+  width:
+    min(72vw, 560px);
+
+  height:
+    min(72vw, 560px);
+
+  transform:
+    translate(-50%, -50%);
+
+  opacity: 0;
+
+  pointer-events: none;
+}
+
+
+.tarot-orbit-slot {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  width: 0;
+  height: 0;
+
+  transform:
+    rotate(
+      calc(
+        var(--i) * 20deg
+      )
+    )
+    translateY(-220px);
+}
+
+
+.tarot-orbit-card {
+  width: 46px;
+  height: 78px;
+
+  margin-left: -23px;
+  margin-top: -39px;
+
+  overflow: hidden;
+
+  border-radius: 6px;
+
+  border:
+    1px solid
+    rgba(238,201,111,.52);
+
+  background:
+    linear-gradient(
+      145deg,
+      #141229,
+      #281442,
+      #090818
+    );
+
+  box-shadow:
+    0 6px 20px
+    rgba(0,0,0,.42);
+
+  transform:
+    rotate(
+      calc(
+        var(--i) * -20deg
+      )
+    );
+}
+
+
+.tarot-card-back-symbol {
+  width: 100%;
+  height: 100%;
+
+  display: grid;
+
+  place-items: center;
+
+  color:
+    #e9cb78;
+
+  font-size: 17px;
+}
+
+
+/* =====================================================
+   SELECTED CARD
+===================================================== */
+
+.tarot-selected-card {
+  position: absolute;
+
+  left: 76%;
+  top: 29%;
+
+  z-index: 20;
+
+  width: 170px;
+  height: 292px;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transform:
+    translate(-50%, -50%)
+    rotate(32deg)
+    scale(.35);
+}
+
+
+.tarot-selected-back {
+  width: 100%;
+  height: 100%;
+
+  padding: 8px;
+
+  border-radius: 12px;
+
+  border:
+    1px solid
+    rgba(237,201,111,.6);
+
+  background:
+    linear-gradient(
+      145deg,
+      #131024,
+      #2b1648,
+      #0d0b1c
+    );
+
+  box-shadow:
+    0 18px 45px
+    rgba(0,0,0,.48);
+}
+
+
+.tarot-selected-back-inner {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: space-around;
+
+  border:
+    1px solid
+    rgba(239,207,126,.34);
+
+  border-radius: 8px;
+
+  color:
+    #e8ca76;
+}
+
+
+.tarot-selected-moon {
+  font-size: 30px;
+}
+
+
+.tarot-selected-eye {
+  font-size: 40px;
+}
+
+
+.tarot-selected-star {
+  font-size: 27px;
+}
+
+
+/* =====================================================
+   REVEAL
+===================================================== */
+
+.tarot-reveal-card {
+  position: absolute;
+
+  left: 50%;
+  top: 47%;
+
+  z-index: 30;
+
+  width: 210px;
+  height: 360px;
+
+  max-width: 56vw;
+  max-height: 60dvh;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  border-radius: 13px;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  background:
+    #050611;
+
+  box-shadow:
+    0 22px 65px
+    rgba(0,0,0,.58);
+
+  transform:
+    translate(-50%, -50%)
+    scale(.8);
+}
+
+
+.tarot-reveal-card img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: contain;
+
+  object-position: center;
+}
+
+
+.tarot-reveal-placeholder {
+  width: 100%;
+  height: 100%;
+
+  display: grid;
+
+  place-items: center;
+
+  color:
+    #e9cb79;
+
+  font-size: 50px;
+}
+
+
+/* =====================================================
+   DEEP STAGE
+   สำคัญ: ซ่อนตลอด ยกเว้น deep stages
+===================================================== */
+
+.tarot-deep-stage {
+  display: none;
+
+  position: absolute;
+
+  inset: 0;
+
+  z-index: 40;
+
+  pointer-events: none;
+}
+
+
+.tarot-stage-deep-start
+.tarot-deep-stage,
+.tarot-stage-deep-arrive
+.tarot-deep-stage,
+.tarot-stage-deep-hold
+.tarot-deep-stage {
+  display: block;
+}
+
+
+.tarot-deep-card {
+  position: absolute;
+
+  left: 50%;
+  top: 47%;
+
+  width: 180px;
+  height: 310px;
+
+  overflow: hidden;
+
+  border-radius: 12px;
+
+  border:
+    1px solid
+    rgba(238,202,116,.55);
+
+  background:
+    #070812;
+
+  box-shadow:
+    0 20px 60px
+    rgba(0,0,0,.6);
+}
+
+
+.tarot-deep-card img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  object-position: center;
+}
+
+
+.tarot-deep-back {
+  width: 100%;
+  height: 100%;
+
+  display: grid;
+
+  place-items: center;
+
+  color:
+    #efd17d;
+
+  font-size: 44px;
+
+  background:
+    radial-gradient(
+      circle,
+      #2b184a,
+      #090a18 72%
+    );
+}
+
+
+.tarot-deep-card-one {
+  transform:
+    translate(-50%, -50%);
+}
+
+
+.tarot-deep-card-two {
+  left: -20%;
+
+  transform:
+    translate(-50%, -50%)
+    rotate(-15deg)
+    scale(.72);
+}
+
+
+.tarot-deep-card-three {
+  left: 120%;
+
+  transform:
+    translate(-50%, -50%)
+    rotate(15deg)
+    scale(.72);
+}
+
+
+.tarot-deep-glow {
+  position: absolute;
+
+  left: 50%;
+  top: 47%;
+
+  width: 560px;
+  height: 560px;
+
+  transform:
+    translate(-50%, -50%);
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(241,205,114,.23),
+      rgba(130,67,207,.15) 42%,
+      transparent 72%
+    );
+
+  filter:
+    blur(14px);
+}
+
+
+/* =====================================================
+   CAPTION
+===================================================== */
+
+.tarot-cinema-caption {
+  position: absolute;
+
+  left: 50%;
+
+  bottom:
+    calc(
+      22px +
+      env(safe-area-inset-bottom)
+    );
+
+  z-index: 80;
+
+  width:
+    min(
+      calc(100% - 36px),
+      600px
+    );
+
+  transform:
+    translateX(-50%);
+
+  text-align: center;
+
+  opacity: 0;
+
+  pointer-events: none;
+}
+
+
+.tarot-cinema-caption strong {
+  display: block;
+
+  color:
+    #f2d795;
+
+  font-size:
+    clamp(
+      16px,
+      3vw,
+      23px
+    );
+
+  line-height: 1.5;
+
+  text-shadow:
+    0 2px 12px
+    rgba(0,0,0,.9);
+}
+
+
+.tarot-cinema-caption small {
+  display: block;
+
+  margin-top: 5px;
+
+  color:
+    rgba(255,247,224,.68);
+
+  font-size: 11px;
+}
+
+
+/* =====================================================
+   INITIAL STAGES
+===================================================== */
+
+.tarot-stage-dark
+.tarot-cinema-light {
+  opacity: .22;
+}
+
+
+.tarot-stage-portal
+.tarot-cinema-light,
+.tarot-stage-orbit
+.tarot-cinema-light,
+.tarot-stage-chosen
+.tarot-cinema-light,
+.tarot-stage-reveal
+.tarot-cinema-light {
+  opacity: 1;
+}
+
+
+.tarot-stage-portal
+.tarot-portal-wrap,
+.tarot-stage-orbit
+.tarot-portal-wrap,
+.tarot-stage-chosen
+.tarot-portal-wrap {
+  opacity: 1;
+
+  animation:
+    tarotPortalAppear
+    .9s ease both;
+}
+
+
+@keyframes tarotPortalAppear {
+
+  from {
+    opacity: 0;
+
+    transform:
+      translate(-50%, -50%)
+      scale(.75);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translate(-50%, -50%)
+      scale(1);
+  }
+
+}
+
+
+.tarot-stage-portal
+.tarot-portal-ring-a,
+.tarot-stage-orbit
+.tarot-portal-ring-a,
+.tarot-stage-chosen
+.tarot-portal-ring-a {
+  animation:
+    tarotSpin
+    10s linear infinite;
+}
+
+
+.tarot-stage-portal
+.tarot-portal-ring-b,
+.tarot-stage-orbit
+.tarot-portal-ring-b,
+.tarot-stage-chosen
+.tarot-portal-ring-b {
+  animation:
+    tarotSpinReverse
+    8s linear infinite;
+}
+
+
+@keyframes tarotSpin {
+  to {
+    transform:
+      rotate(360deg);
+  }
+}
+
+
+@keyframes tarotSpinReverse {
+  to {
+    transform:
+      rotate(-360deg);
+  }
+}
+
+
+.tarot-stage-orbit
+.tarot-orbit,
+.tarot-stage-chosen
+.tarot-orbit {
+  opacity: 1;
+
+  animation:
+    tarotOrbitSpin
+    7s linear infinite;
+}
+
+
+@keyframes tarotOrbitSpin {
+
+  from {
+    transform:
+      translate(-50%, -50%)
+      rotate(0deg);
+  }
+
+  to {
+    transform:
+      translate(-50%, -50%)
+      rotate(360deg);
+  }
+
+}
+
+
+/* =====================================================
+   CHOSEN
+===================================================== */
+
+.tarot-stage-chosen
+.tarot-selected-card {
+  opacity: 1;
+
+  animation:
+    tarotChosen
+    1.1s
+    cubic-bezier(.2,.8,.25,1)
+    forwards;
+}
+
+
+@keyframes tarotChosen {
+
+  0% {
+    left: 76%;
+    top: 29%;
+
+    transform:
+      translate(-50%, -50%)
+      rotate(32deg)
+      scale(.35);
+  }
+
+  65% {
+    left: 50%;
+    top: 46%;
+
+    transform:
+      translate(-50%, -50%)
+      rotate(-3deg)
+      scale(1.05);
+  }
+
+  100% {
+    left: 50%;
+    top: 47%;
+
+    transform:
+      translate(-50%, -50%)
+      rotate(0)
+      scale(1);
+  }
+
+}
+
+
+/* =====================================================
+   REVEAL
+===================================================== */
+
+.tarot-stage-reveal
+.tarot-selected-card {
+  display: none;
+}
+
+
+.tarot-stage-reveal
+.tarot-orbit {
+  opacity: 0;
+}
+
+
+.tarot-stage-reveal
+.tarot-portal-wrap {
+  opacity: .28;
+}
+
+
+.tarot-stage-reveal
+.tarot-reveal-card {
+  opacity: 1;
+
+  animation:
+    tarotReveal
+    1s
+    cubic-bezier(.18,.8,.2,1)
+    forwards;
+}
+
+
+@keyframes tarotReveal {
+
+  from {
+    opacity: 0;
+
+    transform:
+      translate(-50%, -50%)
+      scale(.72)
+      rotateY(82deg);
+  }
+
+  60% {
+    opacity: 1;
+
+    transform:
+      translate(-50%, -50%)
+      scale(1.04)
+      rotateY(0);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translate(-50%, -50%)
+      scale(1)
+      rotateY(0);
+  }
+
+}
+
+
+/* =====================================================
+   DEEP ANIMATION
+===================================================== */
+
+.tarot-stage-deep-start
+.tarot-deep-card-one {
+  animation:
+    tarotDeepPulse
+    1.4s ease-in-out infinite;
+}
+
+
+@keyframes tarotDeepPulse {
+
+  0%,
+  100% {
+    transform:
+      translate(-50%, -50%)
+      scale(1);
+  }
+
+  50% {
+    transform:
+      translate(-50%, -50%)
+      scale(1.035);
+  }
+
+}
+
+
+.tarot-stage-deep-arrive
+.tarot-deep-card-two {
+  animation:
+    tarotDeepLeft
+    1.25s
+    cubic-bezier(.17,.82,.22,1)
+    forwards;
+}
+
+
+.tarot-stage-deep-arrive
+.tarot-deep-card-three {
+  animation:
+    tarotDeepRight
+    1.25s
+    cubic-bezier(.17,.82,.22,1)
+    forwards;
+}
+
+
+@keyframes tarotDeepLeft {
+
+  from {
+    left: -20%;
+
+    transform:
+      translate(-50%, -50%)
+      rotate(-18deg)
+      scale(.65);
+  }
+
+  to {
+    left: 30%;
+
+    transform:
+      translate(-50%, -50%)
+      rotate(-5deg)
+      scale(.88);
+  }
+
+}
+
+
+@keyframes tarotDeepRight {
+
+  from {
+    left: 120%;
+
+    transform:
+      translate(-50%, -50%)
+      rotate(18deg)
+      scale(.65);
+  }
+
+  to {
+    left: 70%;
+
+    transform:
+      translate(-50%, -50%)
+      rotate(5deg)
+      scale(.88);
+  }
+
+}
+
+
+.tarot-stage-deep-hold
+.tarot-deep-card-one {
+  left: 50%;
+
+  transform:
+    translate(-50%, -50%)
+    scale(.94);
+}
+
+
+.tarot-stage-deep-hold
+.tarot-deep-card-two {
+  left: 30%;
+
+  transform:
+    translate(-50%, -50%)
+    rotate(-4deg)
+    scale(.88);
+}
+
+
+.tarot-stage-deep-hold
+.tarot-deep-card-three {
+  left: 70%;
+
+  transform:
+    translate(-50%, -50%)
+    rotate(4deg)
+    scale(.88);
+}
+
+
+/* captions */
+
+.tarot-stage-portal
+.tarot-cinema-caption,
+.tarot-stage-orbit
+.tarot-cinema-caption,
+.tarot-stage-chosen
+.tarot-cinema-caption,
+.tarot-stage-reveal
+.tarot-cinema-caption,
+.tarot-stage-deep-start
+.tarot-cinema-caption,
+.tarot-stage-deep-arrive
+.tarot-cinema-caption,
+.tarot-stage-deep-hold
+.tarot-cinema-caption {
+  opacity: 1;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+  .tarot-portal-wrap {
+    width: 90vw;
+  }
+
+
+  .tarot-orbit {
+    width: 90vw;
+    height: 90vw;
+  }
+
+
+  .tarot-orbit-slot {
+    transform:
+      rotate(
+        calc(
+          var(--i) * 20deg
+        )
+      )
+      translateY(-40vw);
+  }
+
+
+  .tarot-orbit-card {
+    width: 36px;
+    height: 62px;
+
+    margin-left: -18px;
+    margin-top: -31px;
+  }
+
+
+  .tarot-selected-card {
+    width: 150px;
+    height: 258px;
+  }
+
+
+  .tarot-reveal-card {
+    width:
+      min(
+        54vw,
+        210px
+      );
+
+    height:
+      min(
+        58dvh,
+        360px
+      );
+  }
+
+
+  .tarot-deep-card {
+    width:
+      min(
+        40vw,
+        155px
+      );
+
+    height:
+      min(
+        52dvh,
+        275px
+      );
+  }
+
+
+  .tarot-stage-deep-arrive
+  .tarot-deep-card-two,
+  .tarot-stage-deep-hold
+  .tarot-deep-card-two {
+    left: 27%;
+  }
+
+
+  .tarot-stage-deep-arrive
+  .tarot-deep-card-three,
+  .tarot-stage-deep-hold
+  .tarot-deep-card-three {
+    left: 73%;
+  }
+
+}
+
+
+/* =====================================================
+   REDUCED MOTION
+===================================================== */
+
+@media (
+  prefers-reduced-motion: reduce
+) {
+
+  .tarot-cinema *,
+  .tarot-cinema *::before,
+  .tarot-cinema *::after {
+    animation-duration:
+      .01ms !important;
+
+    animation-iteration-count:
+      1 !important;
+  }
+
+}
