@@ -1,3 +1,4 @@
+import AdminShortcut from "@/components/AdminShortcut";
 import TarotCinematicBridge from "@/components/TarotCinematicBridge";
 
 export default function Template({
@@ -8,6 +9,9 @@ export default function Template({
   return (
     <>
       {children}
+
+      <AdminShortcut />
+
       <TarotCinematicBridge />
     </>
   );

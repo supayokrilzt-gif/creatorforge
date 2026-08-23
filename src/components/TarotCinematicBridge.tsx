@@ -447,30 +447,6 @@ export default function TarotCinematicBridge() {
     }, 6000);
   }
 
-  function findDeepButton() {
-    const buttons =
-      Array.from(
-        document.querySelectorAll(
-          "button"
-        )
-      ) as HTMLButtonElement[];
-
-    return (
-      buttons.find(
-        (button) =>
-          button.classList.contains(
-            "deep-button"
-          )
-      ) ||
-      buttons.find(
-        (button) =>
-          button.innerText.includes(
-            "เปิดไพ่อีก 2 ใบ"
-          )
-      )
-    );
-  }
-
   function waitForDeepCards(
     attempt = 0
   ) {
@@ -512,56 +488,32 @@ export default function TarotCinematicBridge() {
     }
 
     /*
-      ไพ่ 2 ใบพร้อมแล้ว
+      ไพ่ 2 ใบพร้อมแล้ว:
+      1) ไพ่ใหม่พุ่ง/ถูกดึงเข้ามา
+      2) ค้างให้เห็นครบสามใบ
+      3) ค่อยเปิดหน้าผล 3 ใบ
     */
 
-    setStage(
-      "deep-arrive"
-    );
-
-    /*
-      ให้ไพ่ซ้าย/ขวาวิ่งเข้ามา
-    */
+    setStage("deep-arrive");
 
     later(() => {
-      setStage(
-        "deep-hold"
-      );
-    }, 1600);
-
-    /*
-      เปลี่ยน Result ที่อยู่ด้านหลัง
-      เป็นผล 3 ใบ
-    */
+      setStage("deep-hold");
+    }, 1900);
 
     later(() => {
       setResultData(deep);
-
-      /*
-        Result ยังเปิดอยู่ตลอด
-        ไม่เคยกลับ Home
-      */
-      setResultOpen(true);
-    }, 3000);
-
-    /*
-      จากนั้นค่อยเอา Cinematic ออก
-    */
+    }, 3500);
 
     later(() => {
       setCinematicOpen(false);
-
       setStage("idle");
-
-      runningRef.current =
-        false;
-    }, 3400);
+      setResultOpen(true);
+      runningRef.current = false;
+    }, 3950);
   }
 
   function startDeepSequence() {
-    if (
-      runningRef.current
-    ) {
+    if (runningRef.current) {
       return;
     }
 
@@ -577,24 +529,21 @@ export default function TarotCinematicBridge() {
       return;
     }
 
-    runningRef.current =
-      true;
+    runningRef.current = true;
 
     clearTimers();
 
     /*
-      สำคัญ:
-      ไม่ปิด Result เดิมแล้ว
-
-      Result ใบแรกจะอยู่ด้านหลัง
-      Cinematic ใหม่จะขึ้นทับ
+      V19
+      ปิดผลใบแรกชั่วคราว
+      แล้วเริ่มฉากดึงไพ่เพิ่ม 2 ใบ
     */
+
+    setResultOpen(false);
 
     setImage(first);
 
-    setReversed(
-      firstReverse
-    );
+    setReversed(firstReverse);
 
     setDeepImages([
       first,
@@ -606,47 +555,29 @@ export default function TarotCinematicBridge() {
 
     setCinematicOpen(true);
 
-    setStage(
-      "deep-start"
-    );
+    setStage("deep-start");
+
+    /*
+      สั่ง page.tsx เปิดไพ่เพิ่ม 2 ใบจริง
+    */
 
     later(() => {
-      const deepButton =
-        findDeepButton();
-
-      if (!deepButton) {
-        console.error(
-          "ไม่พบปุ่มเปิดไพ่อีก 2 ใบ"
-        );
-
-        setCinematicOpen(false);
-
-        setStage("idle");
-
-        setResultOpen(true);
-
-        runningRef.current =
-          false;
-
-        return;
-      }
+      window.dispatchEvent(
+        new Event(
+          "creatorforge:deep-reading"
+        )
+      );
 
       /*
-        เรียกระบบจริงใน page.tsx
-      */
-
-      deepButton.click();
-
-      /*
-        page.tsx มีช่วงสุ่มไพ่
-        จึงรอสักนิดก่อนเริ่มตรวจ
+        .deep-cards มีเฉพาะไพ่ใหม่ 2 ใบ
+        captureDeepResult จะเอาใบแรกมารวมเอง
       */
 
       later(() => {
         waitForDeepCards();
-      }, 500);
+      }, 700);
 
-    }, 700);
+    }, 900);
   }
 
   useEffect(() => {
@@ -660,6 +591,17 @@ export default function TarotCinematicBridge() {
     ) {
       setSoundOn(false);
     }
+
+    function handleValidatedCustomReading() {
+      window.setTimeout(() => {
+        startInitialSequence();
+      }, 60);
+    }
+
+    window.addEventListener(
+      "creatorforge:custom-reading-valid",
+      handleValidatedCustomReading
+    );
 
     function handleClick(
       event: MouseEvent
@@ -715,18 +657,10 @@ export default function TarotCinematicBridge() {
         return;
       }
 
+      // คำถามเฉพาะ: อย่าเริ่ม Cinematic จาก click
+      // รอ event จาก page.tsx หลัง validation + intent detection ผ่านแล้วเท่านั้น
       if (isCustom) {
-        const textarea =
-          document.querySelector(
-            ".question-box"
-          ) as HTMLTextAreaElement | null;
-
-        if (
-          textarea &&
-          !textarea.value.trim()
-        ) {
-          return;
-        }
+        return;
       }
 
       window.setTimeout(() => {
@@ -745,6 +679,11 @@ export default function TarotCinematicBridge() {
         "click",
         handleClick,
         false
+      );
+
+      window.removeEventListener(
+        "creatorforge:custom-reading-valid",
+        handleValidatedCustomReading
       );
 
       clearTimers();
