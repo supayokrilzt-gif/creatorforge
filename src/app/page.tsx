@@ -2555,6 +2555,197 @@ export default function Home() {
 
   return (
     <main className="page">
+
+      {/* MEMBER GATE V20 START */}
+      {!user && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 9000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "22px",
+            overflow: "hidden",
+            background:
+              "radial-gradient(circle at 50% 20%, rgba(119,68,190,.34), transparent 32%), radial-gradient(circle at 50% 78%, rgba(229,180,70,.15), transparent 30%), linear-gradient(180deg,#070513 0%,#120826 48%,#05040d 100%)",
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              pointerEvents: "none",
+              opacity: .72,
+              backgroundImage:
+                'url("/tarot-home-v8.png")',
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              filter: "blur(2px) brightness(.42)",
+              transform: "scale(1.03)",
+            }}
+          />
+
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              pointerEvents: "none",
+              background:
+                "linear-gradient(180deg,rgba(4,3,13,.43),rgba(7,4,17,.72))",
+            }}
+          />
+
+          <div
+            style={{
+              position: "relative",
+              width: "min(390px, 94vw)",
+              padding: "38px 25px 30px",
+              borderRadius: "28px",
+              border: "1px solid rgba(247,210,119,.62)",
+              background:
+                "linear-gradient(145deg,rgba(28,15,55,.93),rgba(8,7,23,.96))",
+              boxShadow:
+                "0 26px 80px rgba(0,0,0,.62), 0 0 38px rgba(222,174,73,.18), inset 0 1px 0 rgba(255,255,255,.10)",
+              textAlign: "center",
+              backdropFilter: "blur(14px)",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "12px",
+                letterSpacing: "4px",
+                color: "#cba85e",
+                marginBottom: "13px",
+              }}
+            >
+              ✦ CREATORFORGE ✦
+            </div>
+
+            <div
+              style={{
+                fontSize: "38px",
+                marginBottom: "11px",
+                filter:
+                  "drop-shadow(0 0 14px rgba(232,190,83,.45))",
+              }}
+            >
+              ✨
+            </div>
+
+            <h1
+              style={{
+                margin: "0 0 10px",
+                fontSize: "26px",
+                lineHeight: 1.35,
+                color: "#f4d992",
+                fontWeight: 800,
+                textShadow:
+                  "0 0 18px rgba(232,190,83,.20)",
+              }}
+            >
+              ดูดวงไพ่ทาโร่
+            </h1>
+
+            <div
+              style={{
+                width: "72px",
+                height: "1px",
+                margin: "16px auto 20px",
+                background:
+                  "linear-gradient(90deg,transparent,#d7ad55,transparent)",
+              }}
+            />
+
+            <p
+              style={{
+                margin: "0 auto",
+                maxWidth: "310px",
+                color: "#e9e1ef",
+                fontSize: "15px",
+                lineHeight: 1.9,
+              }}
+            >
+              สมัครสมาชิกฟรีก่อนเริ่มเปิดไพ่
+              <br />
+              เพื่อบันทึกประวัติคำทำนายและใช้งาน CreatorForge
+            </p>
+
+            <div
+              style={{
+                margin: "17px auto 24px",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "7px",
+                padding: "7px 13px",
+                borderRadius: "999px",
+                border:
+                  "1px solid rgba(217,178,91,.27)",
+                background:
+                  "rgba(216,174,82,.07)",
+                color: "#d8bb78",
+                fontSize: "11px",
+              }}
+            >
+              ✦ ช่วง Beta ใช้งานฟรี
+            </div>
+
+            <button
+              type="button"
+              onClick={() => openAuth("register")}
+              style={{
+                width: "100%",
+                minHeight: "62px",
+                borderRadius: "999px",
+                border:
+                  "1px solid rgba(255,232,157,.95)",
+                background:
+                  "radial-gradient(circle at 50% 0%,rgba(255,247,205,.75),transparent 45%),linear-gradient(180deg,#ffe49a 0%,#d5a03d 52%,#a96e17 100%)",
+                color: "#321d02",
+                fontSize: "18px",
+                fontWeight: 900,
+                cursor: "pointer",
+                boxShadow:
+                  "inset 0 2px 0 rgba(255,255,255,.42),0 12px 30px rgba(0,0,0,.40),0 0 25px rgba(242,196,78,.30)",
+              }}
+            >
+              ✦ สมัครสมาชิกฟรี
+            </button>
+
+            <button
+              type="button"
+              onClick={() => openAuth("login")}
+              style={{
+                display: "block",
+                width: "100%",
+                marginTop: "16px",
+                padding: "8px",
+                border: 0,
+                background: "transparent",
+                color: "#cbb8dc",
+                fontSize: "13px",
+                cursor: "pointer",
+              }}
+            >
+              มีบัญชีอยู่แล้ว? เข้าสู่ระบบ
+            </button>
+
+            <div
+              style={{
+                marginTop: "12px",
+                color: "#777083",
+                fontSize: "10px",
+                lineHeight: 1.6,
+              }}
+            >
+              สมัครด้วย Google หรืออีเมลได้
+            </div>
+          </div>
+        </div>
+      )}
+      {/* MEMBER GATE V20 END */}
+
       <style jsx global>{`
         @keyframes tarotFlipIn {
           0% {
